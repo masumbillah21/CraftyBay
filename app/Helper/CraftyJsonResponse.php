@@ -6,12 +6,11 @@ class CraftyJsonResponse
     {
 
         $res = [
-            'status' => 'success',
+            'status' => $status,
             'message' => $message,
+            'data' => $data,
         ];
-        if($data != null){
-            $res['data'] = $data;
-        }
+        
         return response()->json([
             $res
         ], $code);

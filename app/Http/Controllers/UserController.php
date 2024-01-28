@@ -40,23 +40,24 @@ class UserController extends Controller
 
     public function verifyOTP(Request $request){
         try{
+
             $request->validate([
-                'otp'=>'required',
+                'otp'=>'required|numeric|min:6',
             ]);
-            if ($request->header('token') == null) {
-                return CraftyJsonResponse::response("error","Unauthorized.", null, 401);
-            }
 
             $token = $request->header('token');
             $tokenData = JWTHelper::DecodeToken($token);
 
-            $userEmail = $tokenData['userEmail'];
+            $email =  $tokenData->userEmail;
+
             $otp = $request->input('otp');
 
-            $user = User::where('email', $userEmail)->where('otp', $otp)->first();
+            $user = User::where('email', $email)->where('otp', $otp)->first();
 
             if($user->otp == $otp){
-                $token = JWTHelper::CreateToken($userEmail,$user->id);
+                User::where('email', $email)->update(['otp' => 0]);
+
+                $token = JWTHelper::CreateToken($email, $user->id);
                 return CraftyJsonResponse::response("success","OTP verified.", $token);
             }else{
                 return CraftyJsonResponse::response("error","Invalid OTP.");
