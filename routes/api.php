@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,12 +23,14 @@ use App\Http\Controllers\UserController;
 Route::prefix('v1')->group(function () {
     Route::post('login', [UserController::class, 'userLogin']);
     Route::get('brand', [BrandController::class, 'index']);
+    Route::get('category', [CategoryController::class, 'index']);
 
     Route::middleware('token')->group(function () {
         Route::post('verify-otp', [UserController::class, 'verifyOTP']);
         Route::get('profile', [UserProfileController::class, 'readProfile']);
         Route::post('profile', [UserProfileController::class, 'createProfile']);
         Route::apiResource('brand', BrandController::class)->except(['index', 'create', 'edit']);
+        Route::apiResource('category', CategoryController::class)->except(['index', 'create', 'edit']);
     });
     
 });

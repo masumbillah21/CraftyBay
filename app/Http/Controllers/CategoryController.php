@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Helper\ImageHelper;
 use Exception;
 use App\Models\Brand;
+use App\Models\Category;
+use App\Helper\ImageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Helper\CraftyJsonResponse;
 
-class BrandController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(): JsonResponse
     {
-        $brands = Brand::all();
+        $categories = Category::all();
 
-        return CraftyJsonResponse::response('success','Request Successful', $brands);
+        return CraftyJsonResponse::response('success','Request Successful', $categories);
     }
 
     /**
@@ -47,13 +48,13 @@ class BrandController extends Controller
                 $logoPath = null;
             }
 
-            $brand = Brand::create([
+            $category = Category::create([
                 'name' => $request->input('name'),
                 'logo' => $logoPath,
                 'slug' => $request->input('name')
             ]);
 
-            return CraftyJsonResponse::response('success','Request Successful', $brand);
+            return CraftyJsonResponse::response('success','Request Successful', $category);
 
         }catch(Exception $exception){
             return CraftyJsonResponse::response('error', $exception->getMessage());
@@ -67,10 +68,10 @@ class BrandController extends Controller
     {
         try{
 
-            $brand = Brand::findByIdOrSlug($idOrSlug)->first();
+            $category = Category::findByIdOrSlug($idOrSlug)->first();
 
-            if($brand){
-                return CraftyJsonResponse::response('success','Request Successful', $brand);
+            if($category){
+                return CraftyJsonResponse::response('success','Request Successful', $category);
             }
 
             return CraftyJsonResponse::response('error','No data found.');
@@ -85,7 +86,7 @@ class BrandController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Brand $brand)
+    public function edit(Category $category)
     {
         
     }
@@ -98,9 +99,9 @@ class BrandController extends Controller
         
         try{
 
-            $brand = Brand::findByIdOrSlug($idOrSlug)->first();
+            $category = Category::findByIdOrSlug($idOrSlug)->first();
 
-            if(!$brand){
+            if(!$category){
                 return CraftyJsonResponse::response('error','No data found.');
             }
             
@@ -112,23 +113,23 @@ class BrandController extends Controller
             if ($request->has('logo')) {
                 $logoData = $request->input('logo');
                 $logoPath = ImageHelper::imageUpload($logoData, $request->input('name'));
-                ImageHelper::imageDelete($brand->logo);
+                ImageHelper::imageDelete($category->logo);
             } else {
                 $logoPath = null;
             }
 
 
-            $brand->logo = $logoPath ?? $brand->logo;
-            $brand->name = $request->name ?? $brand->name;
-            $brand->slug = $request->name ?? $brand->slug;
+            $category->logo = $logoPath ?? $category->logo;
+            $category->name = $request->name ?? $category->name;
+            $category->slug = $request->name ?? $category->slug;
 
-            $updated = $brand->update();
+            $updated = $category->update();
 
             if($updated){
-                return CraftyJsonResponse::response('success','Brand Updated Successful', $brand->fresh());
+                return CraftyJsonResponse::response('success','Category Updated Successful', $category->fresh());
             }
             
-            return CraftyJsonResponse::response('error','Brand Failed To Update', $brand);
+            return CraftyJsonResponse::response('error','Category Failed To Update', $category);
             
         }catch(Exception $exception){
             return CraftyJsonResponse::response('error', $exception->getMessage());
@@ -142,17 +143,17 @@ class BrandController extends Controller
     {
         try{
 
-            $brand = Brand::findByIdOrSlug($idOrSlug);
+            $category = Category::findByIdOrSlug($idOrSlug);
 
-            if(!$brand){
+            if(!$category){
                 return CraftyJsonResponse::response('error','No data found.');
             }
 
-            ImageHelper::imageDelete($brand->first()->logo);
+            ImageHelper::imageDelete($category->first()->logo);
 
-            $brand->delete();
+            $category->delete();
 
-            return CraftyJsonResponse::response('success','Brand Deleted Successful');
+            return CraftyJsonResponse::response('success','Category Deleted Successful');
             
         }catch(Exception $exception){
             return CraftyJsonResponse::response('error', $exception->getMessage());

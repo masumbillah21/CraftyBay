@@ -18,8 +18,8 @@ class ImageHelper{
 
     public static function imageDelete($image) : bool {
 
-        if (file_exists(public_path('storage/'.$image)) && !empty($image) && !is_null($image)) {
-            unlink(public_path('storage/'.$image));
+        if (Storage::disk('public')->exists($image) && !empty($image) && !is_null($image)) {
+            Storage::disk('public')->delete($image);
             return true;
         }
         return false;
