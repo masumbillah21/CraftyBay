@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\UserProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,14 +24,18 @@ use App\Http\Controllers\UserController;
 Route::prefix('v1')->group(function () {
     Route::post('login', [UserController::class, 'userLogin']);
     Route::get('brand', [BrandController::class, 'index']);
-    Route::get('category', [CategoryController::class, 'index']);
+    Route::apiResource('category', CategoryController::class)->only(['index', 'show']);
+    Route::apiResource('product', ProductController::class)->only(['index', 'show']);
+    Route::get('product/brand/{brand}', [ProductController::class, 'byBrand']);
+    Route::get('product/category/{category}', [ProductController::class, 'byCategory']);
 
     Route::middleware('token')->group(function () {
         Route::post('verify-otp', [UserController::class, 'verifyOTP']);
         Route::get('profile', [UserProfileController::class, 'readProfile']);
         Route::post('profile', [UserProfileController::class, 'createProfile']);
-        Route::apiResource('brand', BrandController::class)->except(['index', 'create', 'edit']);
-        Route::apiResource('category', CategoryController::class)->except(['index', 'create', 'edit']);
+        Route::apiResource('brand', BrandController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('category', CategoryController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('product', ProductController::class)->only(['store', 'update', 'destroy']);
     });
     
 });

@@ -94,16 +94,10 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $idOrSlug)
+    public function update(Request $request, Category $category)
     {
         
         try{
-
-            $category = Category::findByIdOrSlug($idOrSlug)->first();
-
-            if(!$category){
-                return CraftyJsonResponse::response('error','No data found.');
-            }
             
             $request->validate([
                 'name'=>'nullable|max:20|string',
@@ -143,7 +137,7 @@ class CategoryController extends Controller
     {
         try{
 
-            $category = Category::findByIdOrSlug($idOrSlug);
+            $category = Category::findByIdOrSlug($idOrSlug)->noWhere('is_default', 1);
 
             if(!$category){
                 return CraftyJsonResponse::response('error','No data found.');
